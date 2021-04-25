@@ -100,5 +100,35 @@ d3.csv('assets/data/data.csv').then(function(statesData, err) {
     chartGroup.append('g')
         .call(leftAxis);
 
+    // I am recycling alot of variable names from class examples
+    // because they are really good and make it really easy to read
+    // and understand what is happening in the code
+    // ========================================
+    // add circles to scatter plot
+
+    var radius = 10;
+
+    var circleGroup = chartGroup.selectAll('circle')
+        .data(statesData)
+        .enter()
+        .append('circle')
+        .attr('cx', d => xScale(d.age))
+        .attr('cy', d => yScale(d.smokes))
+        .attr('r', radius)
+        .classed('stateCircle', true);
+
+    var fontSize = 10;
+    var abbrGroup = chartGroup.selectAll('text')
+        .data(statesData)
+        .enter()
+        .append('text')
+        // .attr('anchor', 'center')
+        .text(d => d.abbr)
+        .attr('x', d => xScale(d.age))
+        .attr('y', d => yScale(d.smokes)+fontSize/2)
+        .attr('font-size', `${fontSize}px`)
+        .classed('stateText', true);
+
+
 });
 
