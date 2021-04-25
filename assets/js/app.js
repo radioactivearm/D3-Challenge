@@ -129,6 +129,22 @@ d3.csv('assets/data/data.csv').then(function(statesData, err) {
         .attr('font-size', `${fontSize}px`)
         .classed('stateText', true);
 
+    // =========================================
+    // add labels
+    chartGroup.append('text')
+        .attr('transform', `translate(${width / 2}, ${height + margin.top - 10})`)
+        .classed('aText', true)
+        .text('Age (Median)');
 
+    chartGroup.append('text')
+        .attr('transform', 'rotate(-90)')
+        .attr('y', 0 - margin.left + 20)
+        .attr('x', 0 - (height / 2))
+        // .attr('dy', '1em')
+        .classed('aText', true)
+        .text('Smoking (%)');
+
+}).catch(function(error) {
+    console.log(error);
 });
 
