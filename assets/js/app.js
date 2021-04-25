@@ -77,18 +77,28 @@ d3.csv('assets/data/data.csv').then(function(statesData, err) {
     // Make Scales
 
     // x Scale
-    var xScale = d3.linearScale()
+    var xScale = d3.scaleLinear()
         .domain(d3.extent(statesData, s => s.age))
         .range([0, width]);
 
     // y Scale
-    var yScale = d3.linearScale()
+    var yScale = d3.scaleLinear()
         .domain(d3.extent(statesData, s => s.smokes))
         .range([height, 0]);
 
     // ======================================
+    // append axis
 
-    
+    var bottomAxis = d3.axisBottom(xScale);
+    var leftAxis = d3.axisLeft(yScale);
+
+    // x axis
+    chartGroup.append('g')
+        .attr('transform', `translate(0, ${height})`)
+        .call(bottomAxis);
+
+    chartGroup.append('g')
+        .call(leftAxis);
 
 });
 
