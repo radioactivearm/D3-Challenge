@@ -20,7 +20,7 @@ console.log(scatterWidth);
 
 // I may need to tweak these later to make it look good
 var svgWidth = scatterWidth;
-var svgHeight = 3 * scatterWidth / 5; 
+var svgHeight = 3 * svgWidth / 5; 
 
 var margin = {
     top: 50,
@@ -106,7 +106,7 @@ d3.csv('assets/data/data.csv').then(function(statesData, err) {
     // ========================================
     // add circles to scatter plot
 
-    var radius = 10;
+    var radius = 8;
 
     var circleGroup = chartGroup.selectAll('circle')
         .data(statesData)
@@ -117,8 +117,8 @@ d3.csv('assets/data/data.csv').then(function(statesData, err) {
         .attr('r', radius)
         .classed('stateCircle', true);
 
-    var fontSize = 10;
-    var abbrGroup = chartGroup.selectAll('text')
+    var fontSize = radius;
+    var abbrGroup = chartGroup.selectAll(null)
         .data(statesData)
         .enter()
         .append('text')
