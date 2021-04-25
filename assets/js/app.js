@@ -39,5 +39,32 @@ var chartGroup = svg.append('g')
 
 // ==================================================================
 
+// time to call csv
+d3.csv('assets/data/data.csv').then(function(statesData, err) {
+    if (err) throw err;
+    console.log(statesData);
 
+    // i need to parse data into useable format
+    statesData.forEach(state => {
+        // console.log(typeof state.income);
+        
+        state.age = +state.age;
+        state.ageMoe = +state.ageMoe;
+        state.healthcare = +state.healthcare;
+        state.healthcareHigh = +state.healthcareHigh;
+        state.healthcareLow = +state.healthcareLow;
+        state.id = +state.id;
+        state.income = +state.income;
+        state.incomeMoe = +state.incomeMoe;
+        state.obesity = +state.obesity;
+        state.obesityHigh = +state.obesityHigh;
+        state.obesityLow = +state.obesityLow;
+        state.poverty = +state.poverty;
+        state.povertyMoe = +state.povertyMoe;
+        state.smokes = +state.smokes;
+        state.smokesHigh = +state.smokesHigh;
+        state.smokesLow = +state.smokesLow;
+
+    });
+});
 
