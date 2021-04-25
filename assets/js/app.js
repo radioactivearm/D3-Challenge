@@ -1,5 +1,8 @@
 console.log('loaded app.js');
 
+// i think for main homework I am going to plot age and smoking
+
+
 // This is to find the width of the container so I can set
 // the width of the scatter plot to be the same
 var scatter = d3.select('#scatter');
@@ -44,6 +47,8 @@ d3.csv('assets/data/data.csv').then(function(statesData, err) {
     if (err) throw err;
     console.log(statesData);
 
+
+    // ==========================================
     // i need to parse data into useable format
     statesData.forEach(state => {
         // console.log(typeof state.income);
@@ -66,5 +71,24 @@ d3.csv('assets/data/data.csv').then(function(statesData, err) {
         state.smokesLow = +state.smokesLow;
 
     });
+    // ===================================
+
+    // ==================================
+    // Make Scales
+
+    // x Scale
+    var xScale = d3.linearScale()
+        .domain(d3.extent(statesData, s => s.age))
+        .range([0, width]);
+
+    // y Scale
+    var yScale = d3.linearScale()
+        .domain(d3.extent(statesData, s => s.smokes))
+        .range([height, 0]);
+
+    // ======================================
+
+    
+
 });
 
