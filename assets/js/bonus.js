@@ -104,12 +104,12 @@ d3.csv('assets/data/data.csv').then(function(statesData, err) {
 
     // x Scale
     var xScale = d3.scaleLinear()
-        .domain(d3.extent(statesData, s => s.age))
+        .domain(d3.extent(statesData, s => s.poverty))
         .range([0, width]);
 
     // y Scale
     var yScale = d3.scaleLinear()
-        .domain(d3.extent(statesData, s => s.smokes))
+        .domain(d3.extent(statesData, s => s.healthcare))
         .range([height, 0]);
 
     // ======================================
@@ -135,8 +135,8 @@ d3.csv('assets/data/data.csv').then(function(statesData, err) {
         .data(statesData)
         .enter()
         .append('circle')
-        .attr('cx', d => xScale(d.age))
-        .attr('cy', d => yScale(d.smokes))
+        .attr('cx', d => xScale(d.poverty))
+        .attr('cy', d => yScale(d.healthcare))
         .attr('r', radius)
         .attr('opacity', '.75')
         .classed('stateCircle', true);
@@ -148,8 +148,8 @@ d3.csv('assets/data/data.csv').then(function(statesData, err) {
         .append('text')
         // .attr('anchor', 'center')
         .text(d => d.abbr)
-        .attr('x', d => xScale(d.age))
-        .attr('y', d => yScale(d.smokes)+fontSize/2)
+        .attr('x', d => xScale(d.poverty))
+        .attr('y', d => yScale(d.healthcare)+fontSize/2)
         .attr('font-size', `${fontSize}px`)
         .classed('stateText', true);
 
@@ -163,7 +163,7 @@ d3.csv('assets/data/data.csv').then(function(statesData, err) {
         .attr('x', 0)
         .attr('y', 0)
         .attr('value', 'poverty')
-        .attr('value', 'active')
+        .classed('active', true)
         .classed('aText', true)
         .text('Poverty (%)');
 
@@ -171,7 +171,7 @@ d3.csv('assets/data/data.csv').then(function(statesData, err) {
         .attr('x', 0)
         .attr('y', 20)
         .attr('value', 'age')
-        .attr('value', 'inactive')
+        .classed('inactive', true)
         .classed('aText', true)
         .text('Age (Median)');
 
@@ -179,7 +179,7 @@ d3.csv('assets/data/data.csv').then(function(statesData, err) {
         .attr('x', 0)
         .attr('y', 40)
         .attr('value', 'income')
-        .attr('value', 'inactive')
+        .classed('inactive', true)
         .classed('aText', true)
         .text('Household Income (Median)');
 
@@ -190,7 +190,7 @@ d3.csv('assets/data/data.csv').then(function(statesData, err) {
         .attr('y', 0)
         .attr('x', 0)
         .attr('value', 'healthcare')
-        .attr('value', 'active')
+        .classed('active', true)
         .classed('aText', true)
         .text('Lacks Healthcare (%)');
 
@@ -198,7 +198,7 @@ d3.csv('assets/data/data.csv').then(function(statesData, err) {
         .attr('y', -20)
         .attr('x', 0)
         .attr('value', 'smokes')
-        .attr('value', 'inactive')
+        .classed('inactive', true)
         .classed('aText', true)
         .text('Smokes (%)');
  
@@ -206,11 +206,63 @@ d3.csv('assets/data/data.csv').then(function(statesData, err) {
         .attr('y', -40)
         .attr('x', 0)
         .attr('value', 'obese')
-        .attr('value', 'inactive')
+        .classed('inactive', true)
         .classed('aText', true)
         .text('Obese (%)');
 
+    // Handling change in X axis
+    xLabels.selectAll('text')
+        .on('click', function() {
+            var value = d3.select(this).attr('value');
 
+            if (value !== selectedX) {
+
+                selectedX = value;
+                // console.log(selectedX);
+
+                switch (selectedX) {
+
+                    case 'poverty':
+                        povertyLabel
+                            .classed('active', true)
+                            .classed('inactive', false);
+                        ageLabel
+                            .classed('active', false)
+                            .classed('inactive', true);
+                        incomeLabel 
+                            .classed('active', false)
+                            .classed('inactive', true);
+                        break;
+
+                    case 'age':
+                        povertyLabel
+                            .classed('active', false)
+                            .classed('inactive', true);
+                        ageLabel
+                            .classed('active', true)
+                            .classed('inactive', false);
+                        incomeLabel 
+                            .classed('active', false)
+                            .classed('inactive', true);
+                        break;
+
+                    case 'income':
+                        povertyLabel
+                            .classed('active', false)
+                            .classed('inactive', true);
+                        ageLabel
+                            .classed('active', false)
+                            .classed('inactive', true);
+                        incomeLabel 
+                            .classed('active', true)
+                            .classed('inactive', false);
+                        break;
+
+                }
+
+            }
+
+        });
 
 }).catch(function(error) {
     console.log(error);
