@@ -155,18 +155,62 @@ d3.csv('assets/data/data.csv').then(function(statesData, err) {
 
     // =========================================
     // add labels
-    chartGroup.append('text')
-        .attr('transform', `translate(${width / 2}, ${height + margin.top - 10})`)
+    
+    var xLabels = chartGroup.append('g')
+    .attr('transform', `translate(${width / 2}, ${height + margin.top - 10})`);
+
+    var povertyLabel = xLabels.append('text')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('value', 'poverty')
+        .attr('value', 'active')
+        .classed('aText', true)
+        .text('Poverty (%)');
+
+    var ageLabel = xLabels.append('text')
+        .attr('x', 0)
+        .attr('y', 20)
+        .attr('value', 'age')
+        .attr('value', 'inactive')
         .classed('aText', true)
         .text('Age (Median)');
 
-    chartGroup.append('text')
-        .attr('transform', 'rotate(-90)')
-        .attr('y', 0 - margin.left + 20)
-        .attr('x', 0 - (height / 2))
-        // .attr('dy', '1em')
+    var incomeLabel = xLabels.append('text')
+        .attr('x', 0)
+        .attr('y', 40)
+        .attr('value', 'income')
+        .attr('value', 'inactive')
         .classed('aText', true)
-        .text('Smoking (%)');
+        .text('Household Income (Median)');
+
+    var yLabels = chartGroup.append('g')
+        .attr('transform', `rotate(-90) translate(${-height/2}, ${-30})`);
+
+    var healthcareLabel = yLabels.append('text')
+        .attr('y', 0)
+        .attr('x', 0)
+        .attr('value', 'healthcare')
+        .attr('value', 'active')
+        .classed('aText', true)
+        .text('Lacks Healthcare (%)');
+
+    var smokesLabel = yLabels.append('text')
+        .attr('y', -20)
+        .attr('x', 0)
+        .attr('value', 'smokes')
+        .attr('value', 'inactive')
+        .classed('aText', true)
+        .text('Smokes (%)');
+ 
+    var obeseLabel = yLabels.append('text')
+        .attr('y', -40)
+        .attr('x', 0)
+        .attr('value', 'obese')
+        .attr('value', 'inactive')
+        .classed('aText', true)
+        .text('Obese (%)');
+
+
 
 }).catch(function(error) {
     console.log(error);
