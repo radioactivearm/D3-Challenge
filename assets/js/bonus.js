@@ -25,8 +25,8 @@ var svgHeight = 3 * svgWidth / 5;
 var margin = {
     top: 50,
     right: 50,
-    bottom: 50,
-    left: 50
+    bottom: 120,
+    left: 120
 };
 
 var height = svgHeight - margin.top - margin.bottom;
@@ -39,6 +39,32 @@ var svg = d3.select('#scatter')
 
 var chartGroup = svg.append('g')
     .attr('transform', `translate(${margin.left}, ${margin.top})`);
+
+
+// ===================================================================
+// setting up functions for scales, axes, and circles
+selectedX = 'in_poverty';
+selectedY = 'healthcare';
+
+// started with stubs to layout my plan
+
+// scaler for x axis
+function xScaler(statesData, selectedX) {
+    console.log(`Scaling ${selectedX}`);
+}
+
+// scaler for y axis
+function yScaler(statesData, selectedY) {
+    console.log(`Scaling ${selectedY}`);
+}
+
+function renderAxes(newXscale, newYscale, xAxis, yAxis) {
+    console.log('Rendering Axes');
+}
+
+function renderCirlces(circlesGroup, newXScale, newYScale, selectedX, selectedY) {
+    console.log('Rendering Circles')
+}
 
 // ==================================================================
 
