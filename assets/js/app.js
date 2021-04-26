@@ -106,7 +106,7 @@ d3.csv('assets/data/data.csv').then(function(statesData, err) {
     // ========================================
     // add circles to scatter plot
 
-    var radius = 8;
+    var radius = 9;
 
     var circleGroup = chartGroup.selectAll('circle')
         .data(statesData)
@@ -115,6 +115,7 @@ d3.csv('assets/data/data.csv').then(function(statesData, err) {
         .attr('cx', d => xScale(d.age))
         .attr('cy', d => yScale(d.smokes))
         .attr('r', radius)
+        .attr('opacity', '.75')
         .classed('stateCircle', true);
 
     var fontSize = radius;
