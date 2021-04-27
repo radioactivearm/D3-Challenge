@@ -2,6 +2,8 @@ console.log('loaded bonus.js');
 
 // started with a copy of app.js
 
+// initializing size of circles
+var radius = 9;
 
 // This is to find the width of the container so I can set
 // the width of the scatter plot to be the same
@@ -65,6 +67,12 @@ function xScaler(statesData, selectedX) {
 // scaler for y axis
 function yScaler(statesData, selectedY) {
     console.log(`Scaling ${selectedY}`);
+
+    var yScale = d3.scaleLinear()
+        .domain(d3.extent(statesData, s => s[selectedY]))
+        .range([height, 0]);
+
+    return yScale;
 }
 
 // rendering new x Axis
@@ -78,26 +86,56 @@ function renderXAxis(newXScale, xAxis) {
     return xAxis;
 }
 
-// rendering new points for circles
+// rendering new y Axis
+function renderYAxis(newYScale, yAxis) {
+    var leftAxis = d3.axisLeft(newYScale);
+
+    yAxis.transition()
+        .duration(clock)
+        .call(leftAxis);
+
+    return yAxis;
+}
+
+// rendering new points for x circles
 function renderXCircle(circleGroup, newXScale, selectedX) {
 
     circleGroup.transition()
         .duration(clock)
         .attr('cx', s => newXScale(s[selectedX]));
 
-    return circleGroup
-
+    return circleGroup;
 }
 
-// rendering new points for abbr
+// rendering new points for y circles
+function renderYCircle(circleGroup, newYScale, selectedY) {
+
+    circleGroup.transition()
+        .duration(clock)
+        .attr('cy', s => newYScale(s[selectedY]));
+
+    return circleGroup;
+}
+
+
+// rendering new points for x abbr
 function renderXAbbr(abbrGroup, newXScale, selectedX) {
 
     abbrGroup.transition()
         .duration(clock)
         .attr('x', s => newXScale(s[selectedX]));
 
-    return abbrGroup
+    return abbrGroup;
+}
 
+// rendering new points for y abbr
+function renderYAbbr(abbrGroup, newYScale, selectedY) {
+
+    abbrGroup.transition()
+        .duration(clock)
+        .attr('y', s => newYScale(s[selectedY]) + radius / 2);
+
+    return abbrGroup;
 }
 
 
@@ -158,7 +196,7 @@ d3.csv('assets/data/data.csv').then(function (statesData, err) {
         .attr('transform', `translate(0, ${height})`)
         .call(bottomAxis);
 
-    chartGroup.append('g')
+    var yAxis = chartGroup.append('g')
         .call(leftAxis);
 
     // ========================================
@@ -176,7 +214,6 @@ d3.csv('assets/data/data.csv').then(function (statesData, err) {
         .attr('opacity', '.75')
         .classed('stateCircle', true);
 
-    var fontSize = radius;
     var abbrGroup = chartGroup.selectAll(null)
         .data(statesData)
         .enter()
@@ -184,8 +221,8 @@ d3.csv('assets/data/data.csv').then(function (statesData, err) {
         // .attr('anchor', 'center')
         .text(d => d.abbr)
         .attr('x', d => xScale(d.poverty))
-        .attr('y', d => yScale(d.healthcare) + fontSize / 2)
-        .attr('font-size', `${fontSize}px`)
+        .attr('y', d => yScale(d.healthcare) + radius / 2)
+        .attr('font-size', `${radius}px`)
         .classed('stateText', true);
 
     // =========================================
@@ -240,7 +277,7 @@ d3.csv('assets/data/data.csv').then(function (statesData, err) {
     var obeseLabel = yLabels.append('text')
         .attr('y', -40)
         .attr('x', 0)
-        .attr('value', 'obese')
+        .attr('value', 'obesity')
         .classed('inactive', true)
         .classed('aText', true)
         .text('Obese (%)');
@@ -317,6 +354,14 @@ d3.csv('assets/data/data.csv').then(function (statesData, err) {
                 selectedY = value;
                 console.log(selectedY);
 
+                yScale = yScaler(statesData, selectedY);
+
+                yAxis = renderYAxis(yScale, yAxis);
+
+                circleGroup = renderYCircle(circleGroup, yScale, selectedY);
+
+                abbrGroup = renderYAbbr(abbrGroup, yScale, selectedY);
+
                 switch (selectedY) {
 
                     case 'healthcare':
@@ -343,7 +388,7 @@ d3.csv('assets/data/data.csv').then(function (statesData, err) {
                             .classed('inactive', true);
                         break;
 
-                    case 'obese':
+                    case 'obesity':
                         healthcareLabel
                             .classed('active', false)
                             .classed('inactive', true);
