@@ -58,7 +58,8 @@ function xScaler(statesData, selectedX) {
     console.log(`Scaling ${selectedX}`);
 
     var xScale = d3.scaleLinear()
-        .domain(d3.extent(statesData, s => s[selectedX]))
+        // .domain(d3.extent(statesData, s => s[selectedX]))
+        .domain([(d3.min(statesData, s => s[selectedX]) * 0.95), (d3.max(statesData, s => s[selectedX]) * 1.05)])
         .range([0, width]);
 
     return xScale;
@@ -69,7 +70,8 @@ function yScaler(statesData, selectedY) {
     console.log(`Scaling ${selectedY}`);
 
     var yScale = d3.scaleLinear()
-        .domain(d3.extent(statesData, s => s[selectedY]))
+        // .domain(d3.extent(statesData, s => s[selectedY]))
+        .domain([(d3.min(statesData, s => s[selectedY]) * 0.95), (d3.max(statesData, s => s[selectedY]) * 1.05)])
         .range([height, 0]);
 
     return yScale;
@@ -142,27 +144,28 @@ function renderYAbbr(abbrGroup, newYScale, selectedY) {
 // =================================================================
 // Tool tip function
 
-function drawToolTip(statesData, selectedX, selectedY, circleGroup) {
+function drawToolTip(selectedX, selectedY, circleGroup) {
 
     var xLabel;
     var yLabel;
-    var pLabel = '%';
+    var pxLabel;
+    var pyLabel
 
     // switching for xLabel
     switch (selectedX) {
         case 'poverty':
             xLabel = 'Poverty';
-            pLabel = '%';
+            pxLabel = '%';
             break;
         
         case 'age':
             xLabel = 'Age';
-            pLabel = '';
+            pxLabel = '';
             break;
         
         case 'income':
             xLabel = 'Income';
-            pLabel = '';
+            pxLabel = '';
             break;
     }
 
@@ -170,17 +173,17 @@ function drawToolTip(statesData, selectedX, selectedY, circleGroup) {
     switch (selectedY) {
         case 'healthcare':
             yLabel = 'Healthcare';
-            pLabel = '%';
+            pyLabel = '%';
             break;
         
         case 'smokes':
             yLabel = 'Smokes';
-            pLabel = '%';
+            pyLabel = '%';
             break;
 
         case 'obesity':
             yLabel = 'Obesity';
-            pLabel = '%';
+            pyLabel = '%';
             break;
     }
 
@@ -188,9 +191,21 @@ function drawToolTip(statesData, selectedX, selectedY, circleGroup) {
         .attr('class', 'd3-tip')
         .offset([80, -60])
         .html(function(s) {
-            return (`${s.state}<br>${xLabel}: ${s[selectedX]}${pLabel}<br>${yLabel}: ${s[selectedY]}${pLabel}`);
+            return (`${s.state}<br>${xLabel}: ${s[selectedX]}${pxLabel}<br>${yLabel}: ${s[selectedY]}${pyLabel}`);
         });
 
+    circleGroup.call(toolTip);
+
+    // I got help fixing a frustrating tooltip error from this site
+    // https://github.com/caged/d3-tip/issues/231
+
+    circleGroup.on('mouseover', function(d) {
+        toolTip.show(d, this);
+    }).on('mouseout', function(d) {
+        toolTip.hide(d);
+    });
+
+    return circleGroup;
 }
 
 // ==================================================================
@@ -230,14 +245,10 @@ d3.csv('assets/data/data.csv').then(function (statesData, err) {
     // Make Scales
 
     // x Scale
-    var xScale = d3.scaleLinear()
-        .domain(d3.extent(statesData, s => s[selectedX]))
-        .range([0, width]);
+    var xScale = xScaler(statesData, selectedX);
 
     // y Scale
-    var yScale = d3.scaleLinear()
-        .domain(d3.extent(statesData, s => s[selectedY]))
-        .range([height, 0]);
+    var yScale = yScaler(statesData, selectedY);
 
     // ======================================
     // append axis
@@ -336,6 +347,8 @@ d3.csv('assets/data/data.csv').then(function (statesData, err) {
         .classed('aText', true)
         .text('Obese (%)');
 
+    cirlceGroup = drawToolTip(selectedX, selectedY, circleGroup);
+
     // Handling change in X axis
     xLabels.selectAll('text')
         .on('click', function () {
@@ -353,6 +366,8 @@ d3.csv('assets/data/data.csv').then(function (statesData, err) {
                 circleGroup = renderXCircle(circleGroup, xScale, selectedX);
 
                 abbrGroup = renderXAbbr(abbrGroup, xScale, selectedX);
+
+                cirlceGroup = drawToolTip(selectedX, selectedY, circleGroup);
 
                 switch (selectedX) {
 
@@ -415,6 +430,8 @@ d3.csv('assets/data/data.csv').then(function (statesData, err) {
                 circleGroup = renderYCircle(circleGroup, yScale, selectedY);
 
                 abbrGroup = renderYAbbr(abbrGroup, yScale, selectedY);
+
+                cirlceGroup = drawToolTip(selectedX, selectedY, circleGroup);
 
                 switch (selectedY) {
 
