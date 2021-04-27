@@ -139,6 +139,60 @@ function renderYAbbr(abbrGroup, newYScale, selectedY) {
 }
 
 
+// =================================================================
+// Tool tip function
+
+function drawToolTip(statesData, selectedX, selectedY, circleGroup) {
+
+    var xLabel;
+    var yLabel;
+    var pLabel = '%';
+
+    // switching for xLabel
+    switch (selectedX) {
+        case 'poverty':
+            xLabel = 'Poverty';
+            pLabel = '%';
+            break;
+        
+        case 'age':
+            xLabel = 'Age';
+            pLabel = '';
+            break;
+        
+        case 'income':
+            xLabel = 'Income';
+            pLabel = '';
+            break;
+    }
+
+    // switching for yLabel
+    switch (selectedY) {
+        case 'healthcare':
+            yLabel = 'Healthcare';
+            pLabel = '%';
+            break;
+        
+        case 'smokes':
+            yLabel = 'Smokes';
+            pLabel = '%';
+            break;
+
+        case 'obesity':
+            yLabel = 'Obesity';
+            pLabel = '%';
+            break;
+    }
+
+    var toolTip = d3.tip()
+        .attr('class', 'd3-tip')
+        .offset([80, -60])
+        .html(function(s) {
+            return (`${s.state}<br>${xLabel}: ${s[selectedX]}${pLabel}<br>${yLabel}: ${s[selectedY]}${pLabel}`);
+        });
+
+}
+
 // ==================================================================
 
 // time to call csv
