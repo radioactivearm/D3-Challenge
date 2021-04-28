@@ -3,7 +3,7 @@ console.log('loaded bonus.js');
 // started with a copy of app.js
 
 // initializing size of circles
-var radius = 9;
+var radius = 10;
 
 // This is to find the width of the container so I can set
 // the width of the scatter plot to be the same
@@ -201,8 +201,21 @@ function drawToolTip(selectedX, selectedY, circleGroup) {
 
     circleGroup.on('mouseover', function(d) {
         toolTip.show(d, this);
+
+        var sCircle = d3.select(this);
+
+        sCircle.classed('stateCircle', false)
+            .attr('fill', '#89bdd3')
+            .attr('stroke', 'crimson')
+            .attr('stroke-width', '3');
+
     }).on('mouseout', function(d) {
         toolTip.hide(d);
+
+        var sCircle = d3.select(this);
+
+        sCircle.classed('stateCircle', true)
+            .attr('stroke-width', '1');
     });
 
     return circleGroup;
