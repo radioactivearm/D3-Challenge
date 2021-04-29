@@ -20,10 +20,12 @@ console.log(scatterWidth);
 // This beginning part is a Chocolate cake recipe I am pulling from
 // class examples
 
-// I may need to tweak these later to make it look good
+// I set the svg to be as wide as the contianer it is in
+// then I am setting its height to be a ratio of it's width
 var svgWidth = scatterWidth;
 var svgHeight = 3 * svgWidth / 5;
 
+// giving it more room on the left and bottom for axis labels
 var margin = {
     top: 50,
     right: 50,
@@ -45,6 +47,9 @@ var chartGroup = svg.append('g')
 
 // ===================================================================
 // setting up functions for scales, axes, and circles
+
+
+// My initial starting axes
 selectedX = 'poverty';
 selectedY = 'healthcare';
 
@@ -59,6 +64,7 @@ function xScaler(statesData, selectedX) {
 
     var xScale = d3.scaleLinear()
         // .domain(d3.extent(statesData, s => s[selectedX]))
+        // giving it some wiggle room in the edges to make it look better
         .domain([(d3.min(statesData, s => s[selectedX]) * 0.95), (d3.max(statesData, s => s[selectedX]) * 1.05)])
         .range([0, width]);
 
@@ -71,6 +77,7 @@ function yScaler(statesData, selectedY) {
 
     var yScale = d3.scaleLinear()
         // .domain(d3.extent(statesData, s => s[selectedY]))
+        // giving it some wiggle room in the edges to make it look better
         .domain([(d3.min(statesData, s => s[selectedY]) * 0.95), (d3.max(statesData, s => s[selectedY]) * 1.05)])
         .range([height, 0]);
 
@@ -81,6 +88,7 @@ function yScaler(statesData, selectedY) {
 function renderXAxis(newXScale, xAxis) {
     var bottomAxis = d3.axisBottom(newXScale);
 
+    // Transitioning to the new axis
     xAxis.transition()
         .duration(clock)
         .call(bottomAxis);
@@ -146,10 +154,13 @@ function renderYAbbr(abbrGroup, newYScale, selectedY) {
 
 function drawToolTip(selectedX, selectedY, circleGroup) {
 
+    // initializing all my variatbles
+    // These will be the X and Y labels that go in front of the value
     var xLabel;
     var yLabel;
+    // These values potenially hold a '%' depending on whether or not it is a percent value
     var pxLabel;
-    var pyLabel
+    var pyLabel;
 
     // switching for xLabel
     switch (selectedX) {
@@ -187,6 +198,7 @@ function drawToolTip(selectedX, selectedY, circleGroup) {
             break;
     }
 
+    // here I am defining tool tip object
     var toolTip = d3.tip()
         .attr('class', 'd3-tip')
         .offset([80, -60])
@@ -194,6 +206,7 @@ function drawToolTip(selectedX, selectedY, circleGroup) {
             return (`${s.state}<br>${xLabel}: ${s[selectedX]}${pxLabel}<br>${yLabel}: ${s[selectedY]}${pyLabel}`);
         });
 
+    // creating and appending tooltips
     circleGroup.call(toolTip);
 
     // I got help fixing a frustrating tooltip error from this site
@@ -202,19 +215,26 @@ function drawToolTip(selectedX, selectedY, circleGroup) {
     circleGroup.on('mouseover', function(d) {
         toolTip.show(d, this);
 
+        // selecting just the circle that I am on
         var sCircle = d3.select(this);
 
+        // turning off it's class to clear css
         sCircle.classed('stateCircle', false)
+            // readding the css I want
             .attr('fill', '#89bdd3')
+            // want i want is a different color stroke that is bigger
             .attr('stroke', 'crimson')
             .attr('stroke-width', '3');
 
     }).on('mouseout', function(d) {
         toolTip.hide(d);
 
+        // selecting that cirlce again
         var sCircle = d3.select(this);
 
+        // turning back on css which overwrites those changes i made...
         sCircle.classed('stateCircle', true)
+            // ...except stroke-width so I reset that back to 1
             .attr('stroke-width', '1');
     });
 
@@ -367,11 +387,13 @@ d3.csv('assets/data/data.csv').then(function (statesData, err) {
         .on('click', function () {
             var value = d3.select(this).attr('value');
 
+            // if the selected X axis has changed this runs
             if (value !== selectedX) {
 
                 selectedX = value;
                 console.log(selectedX);
 
+                // running all the x changing functions to update the plot
                 xScale = xScaler(statesData, selectedX);
 
                 xAxis = renderXAxis(xScale, xAxis);
@@ -382,6 +404,8 @@ d3.csv('assets/data/data.csv').then(function (statesData, err) {
 
                 cirlceGroup = drawToolTip(selectedX, selectedY, circleGroup);
 
+
+                // changing classes of things for css reasons
                 switch (selectedX) {
 
                     case 'poverty':
@@ -431,11 +455,13 @@ d3.csv('assets/data/data.csv').then(function (statesData, err) {
         .on('click', function () {
             var value = d3.select(this).attr('value');
 
+            // if the selected Y axis has changed this runs
             if (value !== selectedY) {
 
                 selectedY = value;
                 console.log(selectedY);
 
+                // running all the y changing functions to update the plot
                 yScale = yScaler(statesData, selectedY);
 
                 yAxis = renderYAxis(yScale, yAxis);
@@ -446,6 +472,8 @@ d3.csv('assets/data/data.csv').then(function (statesData, err) {
 
                 cirlceGroup = drawToolTip(selectedX, selectedY, circleGroup);
 
+
+                // changing classes of things for css reasons
                 switch (selectedY) {
 
                     case 'healthcare':
