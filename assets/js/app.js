@@ -1,7 +1,25 @@
 console.log('loaded app.js');
 
-// i think for main homework I am going to plot age and smoking
 
+// made it easy to switch between axes
+// I did this because I had originally done one pair
+// and I came back and wanted to do another and it seemed
+// easier to just make it easy to switch between axes.
+
+// just make the axis you want to show be the one
+// that is uncommented and all others for that axis commented out.
+
+// X Axes =================
+var selectedX = 'poverty';
+// var selectedX = 'age';
+// var selectedX = 'income';
+// =========================
+
+// Y Axes ===================
+var selectedY = 'healthcare';
+// var selectedY = 'smokes';
+// var selectedY = 'obesity';
+// ==========================
 
 // This is to find the width of the container so I can set
 // the width of the scatter plot to be the same
@@ -78,12 +96,12 @@ d3.csv('assets/data/data.csv').then(function(statesData, err) {
 
     // x Scale
     var xScale = d3.scaleLinear()
-        .domain(d3.extent(statesData, s => s.age))
+        .domain([d3.min(statesData, s => s[selectedX]) * 0.95, d3.max(statesData, s => s[selectedX]) * 1.05])
         .range([0, width]);
 
     // y Scale
     var yScale = d3.scaleLinear()
-        .domain(d3.extent(statesData, s => s.smokes))
+        .domain([d3.min(statesData, s => s[selectedY]) * 0.95, d3.max(statesData, s => s[selectedY]) * 1.05])
         .range([height, 0]);
 
     // ======================================
@@ -112,8 +130,8 @@ d3.csv('assets/data/data.csv').then(function(statesData, err) {
         .data(statesData)
         .enter()
         .append('circle')
-        .attr('cx', d => xScale(d.age))
-        .attr('cy', d => yScale(d.smokes))
+        .attr('cx', d => xScale(d[selectedX]))
+        .attr('cy', d => yScale(d[selectedY]))
         .attr('r', radius)
         .attr('opacity', '.75')
         .classed('stateCircle', true);
@@ -125,17 +143,60 @@ d3.csv('assets/data/data.csv').then(function(statesData, err) {
         .append('text')
         // .attr('anchor', 'center')
         .text(d => d.abbr)
-        .attr('x', d => xScale(d.age))
-        .attr('y', d => yScale(d.smokes)+fontSize/2)
+        .attr('x', d => xScale(d[selectedX]))
+        .attr('y', d => yScale(d[selectedY])+fontSize/2)
         .attr('font-size', `${fontSize}px`)
         .classed('stateText', true);
 
     // =========================================
     // add labels
+
+    var xLabel;
+    var yLabel;
+
+    // handle a quick change in axes
+    switch (selectedX) {
+        case 'poverty':
+            xLabel = 'In Poverty (%)';
+            break;
+        
+        case 'age':
+            xlabel = 'Age (Median)';
+            break;
+
+        case 'income':
+            xLabel = 'Household Income (Median)';
+            break;
+        
+        default:
+            xLabel = 'Something Went Wrong';
+            break;
+    }
+
+    switch (selectedY) {
+        case 'healthcare':
+            yLabel = 'Lacks Healthcare (%)';
+            break;
+
+        case 'smokes':
+            yLabel = 'Smokes (%)';
+            break;
+
+        case 'obesity':
+            yLabel = 'Obese (%)';
+            break;
+
+        default:
+            yLabel = 'Something Went Wrong';
+            break;
+    }
+
+
+    // appending axes labels to chart
     chartGroup.append('text')
         .attr('transform', `translate(${width / 2}, ${height + margin.top - 10})`)
         .classed('aText', true)
-        .text('Age (Median)');
+        .text(xLabel);
 
     chartGroup.append('text')
         .attr('transform', 'rotate(-90)')
@@ -143,7 +204,7 @@ d3.csv('assets/data/data.csv').then(function(statesData, err) {
         .attr('x', 0 - (height / 2))
         // .attr('dy', '1em')
         .classed('aText', true)
-        .text('Smoking (%)');
+        .text(yLabel);
 
 }).catch(function(error) {
     console.log(error);
