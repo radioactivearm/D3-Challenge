@@ -8,3 +8,7 @@ There are two graphs here. The main assignment graph, and then the more exciting
 
 * Line for Main Graph => `<script type="text/javascript" src="assets/js/app.js"></script>`
 * Line for Bonus Graph => `<script type="text/javascript" src="assets/js/bonus.js"></script>`
+
+
+## Switching Axes on Main Graph
+I ended up making it rather easy to change the variable you can use on the X and Y axes. All is need is to Comment and Uncomment lines of code. Pretty easy.
