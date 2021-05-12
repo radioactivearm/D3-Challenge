@@ -1,6 +1,9 @@
 # D3-Graphing
 The purpose of this project was to hone my skills with d3 by building scatter plots from scratch using d3. I made two different graphs, one that has two axes x,y. And one where with a click of a button you can switch the x or y axis values.
 
+# Link
+https://radioactivearm.github.io/D3-Graphing/
+
 # Run Code
 * Open with VS Code and open `index.html` with live server.
 
